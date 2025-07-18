@@ -7,14 +7,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
 #     requirements = [line.strip() for line in fh if line.strip() and not line.startswith("#")]
 
 setup(
-    name="harvest-st",
+    name="harvest",
     version="1.0.0",
     author="Your Name",
     author_email="your.email@example.com",
     description="HarveST: A Graph Neural Network for Spatial Transcriptomics Clustering",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/yourusername/harvest-st",
+    url="https://github.com/Seven595/HarveST",
     packages=find_packages(),
     classifiers=[
         "Development Status :: 4 - Beta",
