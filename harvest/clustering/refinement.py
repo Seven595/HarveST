@@ -57,12 +57,7 @@ class ClusterTrainer:
         
         for epoch in range(epochs):
             # Forward pass
-            print("gene_features: ", gene_features)
-            print("adj: ", adj)
             hidden_emb, _, reX_c, reX_g = model(cell_features, gene_features)
-            print("cell_features: ", cell_features)
-            print("reX_c: ", reX_c)
-
             loss_c = F.mse_loss(reX_c, cell_features)
             loss_g = self.config.get('g_loss_w', 1.0) * F.mse_loss(reX_g, gene_features)
             loss = loss_c + loss_g
