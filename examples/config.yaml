@@ -1,0 +1,32 @@
+# Default configuration for HarveST
+preprocessing:
+  n_top_genes: 3000
+  n_bins: 5
+  spatial_params:
+    p: 1.0
+    radius: 150
+    start: 1
+    end: 300
+
+model:
+  hidden_2: 256
+  hidden_3: 64
+  coor_ratio: 0.8
+
+training:
+  epochs: 2000
+  learning_rate: 0.001
+  weight_decay: 0.000001
+  g_loss_w: 1.0
+  log_interval: 100
+  train_seed: 2023
+
+clustering:
+  pca_n_components: 30
+  svm_ratio: 0.5
+  refine_radius: 50
+  cluster_seed: 2020
+
+misc:
+  cuda: true
+  save_results: true 
