@@ -9,8 +9,8 @@ with open("README.md", "r", encoding="utf-8") as fh:
 setup(
     name="harvest",
     version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
+    author="Junning",
+    author_email="786951979@qq.com",
     description="HarveST: A Graph Neural Network for Spatial Transcriptomics Clustering",
     long_description=long_description,
     long_description_content_type="text/markdown",
