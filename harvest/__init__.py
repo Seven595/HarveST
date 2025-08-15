@@ -8,4 +8,4 @@ __version__ = "1.0.0"
 __author__ = "Junning"
 __email__ = "786951979@qq.com"
 
-__all__ = ["Harvest"] 
+__all__ = ["Harvest", "SpatialGeneDiscovery"] 

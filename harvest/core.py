@@ -252,7 +252,102 @@ class Harvest:
             
         self.logger.info("Clustering analysis completed successfully!")
         return results
-    
+    def discover_spatial_genes(self, 
+                          domain_column: str = 'Ground Truth',
+                          restart_prob: float = 0.5,
+                          p_value_threshold: float = 0.01,
+                          num_randomizations: int = 500,
+                          domains: Optional[List[str]] = None,
+                          use_preprocessed_networks: bool = True) -> Dict[str, pd.DataFrame]:
+        """
+        Discover domain-specific spatial variable genes using Random Walk with Restart.
+        
+        Parameters:
+        -----------
+        domain_column : str
+            Column in adata.obs containing domain information
+        restart_prob : float
+            Restart probability for random walk with restart
+        p_value_threshold : float
+            Threshold for significant p-values
+        num_randomizations : int
+            Number of random walks for null distribution
+        domains : List[str], optional
+            List of specific domains to analyze (if None, analyze all domains)
+        use_preprocessed_networks : bool
+            Whether to use networks from preprocessing (if available)
+            
+        Returns:
+        --------
+        dict : Dictionary mapping domain names to DataFrames of significant genes
+        """
+        if not self.preprocessed_data and not use_preprocessed_networks:
+            raise ValueError("Data must be preprocessed first or use_preprocessed_networks must be True.")
+        
+        self.logger.info("Starting spatial gene discovery...")
+        
+        # Initialize SpatialGeneDiscovery
+        from .spatial_gene_discovery import SpatialGeneDiscovery
+        
+        sgd = SpatialGeneDiscovery(
+            data_dir=self.output_dir,  # Use output dir as working directory
+            output_dir=os.path.join(self.output_dir, "spatial_genes"),
+            logger=self.logger
+        )
+        
+        # Use existing adata if available
+        if "adata_processed" in self.preprocessed_data:
+            sgd.adata = self.preprocessed_data["adata_processed"]
+            sgd.num_cells = sgd.adata.shape[0]
+            sgd.num_genes = sgd.adata.shape[1]
+            
+            # Extract domains
+            if domain_column in sgd.adata.obs.columns:
+                sgd.domains = sgd.adata.obs[domain_column].unique().tolist()
+            else:
+                raise ValueError(f"Domain column '{domain_column}' not found in data.")
+        else:
+            raise ValueError("No processed AnnData available. Please run preprocessing first.")
+        
+        # Use preprocessed networks if available
+        if use_preprocessed_networks and self.preprocessed_data:
+            # Create integrated network from preprocessed matrices
+            cc_matrix = self.preprocessed_data["adjacency_matrix"]
+            gg_matrix = self.preprocessed_data["mutual_information"] 
+            cg_matrix = self.preprocessed_data["expression_matrix"]
+            
+            # Normalize matrices
+            cg_norm = sgd._normalize_matrix(cg_matrix)
+            gg_norm = sgd._normalize_matrix(gg_matrix)
+            cc_norm = sgd._normalize_matrix(cc_matrix)
+            
+            # Create integrated adjacency matrix
+            sgd.adj_matrix = np.zeros((sgd.num_cells + sgd.num_genes, 
+                                    sgd.num_cells + sgd.num_genes))
+            
+            sgd.adj_matrix[:sgd.num_cells, :sgd.num_cells] = cc_norm
+            sgd.adj_matrix[:sgd.num_cells, sgd.num_cells:] = cg_norm
+            sgd.adj_matrix[sgd.num_cells:, :sgd.num_cells] = cg_norm.T
+            sgd.adj_matrix[sgd.num_cells:, sgd.num_cells:] = gg_norm
+            
+            # Create gene name mapping
+            sgd.gene_name_mapping = {gene: idx for idx, gene in enumerate(sgd.adata.var.index)}
+            
+            self.logger.info("Using preprocessed networks for spatial gene discovery")
+        else:
+            raise ValueError("Network data must be loaded separately when use_preprocessed_networks=False")
+        
+        # Find domain-specific genes
+        results = sgd.find_domain_specific_genes(
+            domain_column=domain_column,
+            restart_prob=restart_prob,
+            p_value_threshold=p_value_threshold,
+            num_randomizations=num_randomizations,
+            domains=domains
+        )
+        
+        self.logger.info("Spatial gene discovery completed!")
+        return results
     def load_preprocessed_data(self, 
                             matrix_dir: str,
                             data_path: str,
