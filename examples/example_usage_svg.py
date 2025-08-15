@@ -26,7 +26,7 @@ def example_spatial_gene_discovery():
     # Discover spatial genes for all domains
     svg_results = harvest.discover_spatial_genes(
         domain_column='Ground Truth',
-        restart_prob=0.5,
+        restart_prob=0.1,
         p_value_threshold=0.01,
         num_randomizations=100,  # Reduced for faster example
         use_preprocessed_networks=True

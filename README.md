@@ -24,6 +24,10 @@ HarveST is a comprehensive Python package for spatial transcriptomics data analy
 - **Interactive Analysis**: Jupyter notebook for complete workflow
 - **Publication-ready Figures**: Automated generation of analysis plots
 
+## Data Availability
+
+All data used in the paper are publicly available at https://doi.org/10.5281/zenodo.16883462.
+
 ## Installation
 
 ### Conda Environment Installation
@@ -39,9 +43,22 @@ conda activate harvest-env
 
 # 3. Install the package in editable mode
 pip install -e .
+
+# 4. Get the example data
+cd ./Data/151674 && unzip preprocessed.zip
+
 ```
 
 ## Quick Start
+
+### Complete Analysis Workflow
+
+For a comprehensive analysis combining both clustering and spatial gene discovery, see our interactive Jupyter notebook:
+
+```bash
+# Launch Jupyter notebook
+jupyter notebook examples/HarveST_Complete_Analysis.ipynb
+```
 
 ### Basic Clustering Analysis
 
@@ -78,15 +95,6 @@ svg_results = harvest.discover_spatial_genes(
 # Print results
 for domain, genes_df in svg_results.items():
     print(f"Domain {domain}: {len(genes_df)} significant genes")
-```
-
-### Complete Analysis Workflow
-
-For a comprehensive analysis combining both clustering and spatial gene discovery, see our interactive Jupyter notebook:
-
-```bash
-# Launch Jupyter notebook
-jupyter notebook examples/HarveST_Complete_Analysis.ipynb
 ```
 
 ## Examples and Tutorials
