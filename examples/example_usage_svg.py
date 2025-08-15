@@ -12,8 +12,8 @@ def example_spatial_gene_discovery():
     harvest = Harvest(output_dir="./harvest_results_svg")
     
     # Load preprocessed data
-    matrix_dir = "./harvest_results"
-    original_data_path = "/data2/ST/Data/151674/"
+    matrix_dir = "../Data/151674/preprocessed"  # Directory with preprocessed matrices
+    original_data_path = "../Data/151674/"  # Original Visium data
     
     harvest.load_preprocessed_data(
         matrix_dir=matrix_dir,
